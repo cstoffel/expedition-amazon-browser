@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Expedition Amazon</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#050505;color:#d6d6d6}body{font:13px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}main{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 10px 6px}.display{position:relative;width:min(96vw,calc((100svh - 66px)*4/3),960px);aspect-ratio:4/3;background:#000;box-shadow:0 0 0 1px #161616,0 0 50px #000}canvas{display:block;width:100%;height:100%;image-rendering:pixelated;outline:none;touch-action:manipulation}footer{width:min(96vw,960px);padding:10px 0 4px;display:flex;justify-content:center;gap:20px;align-items:baseline;flex-wrap:wrap;color:#777;font-size:11px}a,button,summary{color:inherit}footer a{text-decoration:none}button{font:inherit;background:#111;border:1px solid #444;padding:5px 10px;border-radius:3px;cursor:pointer}footer>button{border:0;background:none;padding:0}summary{cursor:pointer;list-style:none}details[open]{color:#ccc}details>div{position:fixed;z-index:2;bottom:40px;left:50%;transform:translateX(-50%);width:min(94vw,560px);background:#101010;border:1px solid #444;padding:16px;box-shadow:0 10px 40px black}details p{margin:5px 0 12px}#touch-keys{display:flex;gap:5px;flex-wrap:wrap;justify-content:center}#touch-keys button{min-width:36px;min-height:36px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:pre;border:0}#name-entry{position:absolute;left:50%;top:90%;width:1px;height:1px;opacity:0;font-size:16px;pointer-events:none}#save-notice:not(:empty){max-width:90vw;color:#d9b578;font-size:11px;text-align:center;margin:4px 0}a:focus-visible,button:focus-visible,summary:focus-visible{outline:1px solid white;outline-offset:4px}@media(max-width:520px){main{padding:6px 0}.display{width:100vw}footer{gap:18px}details>div{bottom:55px}}
+[hidden]{display:none!important}#access-error{min-height:100svh;display:grid;place-items:center;padding:10px}#access-error .display{width:min(96vw,calc((100svh - 20px)*4/3),960px)}#access-return{position:absolute;inset:0;opacity:0}#access-error .display:focus-within{outline:1px solid #777}
+</style>
+</head>
+<body>
+<section id="access-error" aria-label="Access message">
+<div class="display"><canvas id="access-error-screen" width="280" height="192" aria-hidden="true"></canvas><a id="access-return" href="index.html" aria-label="Return to password screen"></a></div>
+<p id="access-error-text" class="sr-only" role="alert">PASSWORD REQUIRED. Press a key for password screen.</p>
+<noscript>JavaScript is required. <a href="index.html">Return to password screen</a>.</noscript>
+</section>
+<main hidden>
+<div class="display">
+<canvas id="game-screen" width="280" height="192" tabindex="0" role="application" aria-label="Expedition Amazon. Press any key to begin." aria-describedby="game-transcript"></canvas>
+<input id="name-entry" disabled aria-hidden="true" aria-label="Team member name" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="40" tabindex="-1">
+</div>
+<div id="game-transcript" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+<p id="save-notice" role="alert"></p>
+<footer>
+<details id="help"><summary>Help · F1</summary><div><p>Click the display and use the keys printed in the game. Press any key at the opening to begin.</p><p>Title menu: R instructions, S start, V illustration, X exit. Flint: 1–4. Choose difficulty 1–9, then type each name and press Return. Pedro accepts S for Sí. The trading post uses B/S/X, A–M for items, and 1–9 for quantities.</p><p>Use Keyboard for touch controls. Expedition slots save in this browser. Original instructions also describe unported features, including the disk recovery key 5. At base camp, G enters the jungle. Move with I/J/K/M or the arrow keys; C opens camp options. Surface sectors and underground maps are available. Jungle hazards and camp events are active. Combat uses P pistol, G grenade, A automatic rifle (guard), K knife, D duck. R retreats to a random sector. Crypts use O/L; artifact offers use Y/N. In the final maze, H displays the original controls.</p><p>Designed by Willard Phillips.</p></div></details>
+<details id="touch"><summary>Keyboard</summary><div><p>Use the on-screen game keys, or open your device keyboard to enter a name.</p><p><button id="type-name">Type a name</button></p><div id="touch-keys"></div></div></details>
+
+</footer>
+</main>
+<script type="text/plain" data-game-src="graphics.js"></script><script type="text/plain" data-game-src="data.js"></script><script type="text/plain" data-game-src="flint.js?v=cheat-start-2"></script><script type="text/plain" data-game-src="flint-data.js"></script><script type="text/plain" data-game-src="pedro.js"></script><script type="text/plain" data-game-src="pedro-data.js"></script><script type="text/plain" data-game-src="game-data.js?v=game-1"></script><script type="text/plain" data-game-src="screen.js?v=game-1"></script><script type="text/plain" data-game-src="shop.js?v=supplies-1"></script><script type="text/plain" data-game-src="field-data.js?v=encounters-1"></script><script type="text/plain" data-game-src="encounters.js?v=supplies-1"></script><script type="text/plain" data-game-src="outdoor.js?v=supplies-1"></script><script type="text/plain" data-game-src="world-data.js?v=world-1"></script><script type="text/plain" data-game-src="world.js?v=fidelity-1"></script><script type="text/plain" data-game-src="random-data.js?v=native-random-1"></script><script type="text/plain" data-game-src="random.js?v=native-random-1"></script><script type="text/plain" data-game-src="trap-timing-data.js?v=fidelity-1"></script><script type="text/plain" data-game-src="hgr-lines.js?v=native-traps-1"></script><script type="text/plain" data-game-src="traps.js?v=native-traps-1"></script><script type="text/plain" data-game-src="field.js?v=native-only-1"></script><script type="text/plain" data-game-src="title-data.js?v=title-1"></script><script type="text/plain" data-game-src="maze-rules.js?v=native-maze-1"></script>
+<script type="text/plain" data-game-src="maze-controls.js?v=native-maze-1"></script>
+<script type="text/plain" data-game-src="maze-walking.js?v=native-maze-1"></script>
+<script type="text/plain" data-game-src="maze-event-data.js?v=native-maze-1"></script>
+<script type="text/plain" data-game-src="maze-events.js?v=native-maze-1"></script>
+<script type="text/plain" data-game-src="maze-sprite-data.js?v=native-maze-1"></script>
+<script type="text/plain" data-game-src="maze-sprites.js?v=native-maze-1"></script>
+<script type="text/plain" data-game-src="maze-vector-data.js?v=native-maze-1"></script>
+<script type="text/plain" data-game-src="maze-vectors.js?v=native-maze-1"></script>
+<script type="text/plain" data-game-src="maze-hud-data.js?v=native-maze-1"></script>
+<script type="text/plain" data-game-src="maze-hud.js?v=native-maze-1"></script>
+<script type="text/plain" data-game-src="maze-scenes.js?v=native-maze-1"></script>
+<script type="text/plain" data-game-src="maze-flow-data.js?v=native-maze-1"></script>
+<script type="text/plain" data-game-src="maze-effects.js?v=native-maze-1"></script>
+<script type="text/plain" data-game-src="maze-lifecycle.js?v=native-maze-1"></script>
+<script type="text/plain" data-game-src="maze-presentation.js?v=native-maze-1"></script>
+<script type="text/plain" data-game-src="maze-timing-data.js?v=native-maze-1"></script>
+<script type="text/plain" data-game-src="maze-native-save.js?v=pacing-1"></script>
+<script type="text/plain" data-game-src="maze-phase-data.js?v=pacing-1"></script><script type="text/plain" data-game-src="maze-pacing.js?v=pacing-1"></script><script type="text/plain" data-game-src="maze-native.js?v=pacing-1"></script>
+
+<script type="text/plain" data-game-src="maze-audio.js?v=pacing-1"></script>
+<script type="text/plain" data-game-src="ending-data.js?v=native-ending-1"></script><script type="text/plain" data-game-src="ending-timing-data.js?v=pacing-1"></script><script type="text/plain" data-game-src="ending.js?v=pacing-1"></script><script type="text/plain" data-game-src="menus.js?v=menus-5"></script><script type="text/plain" data-game-src="game.js?v=native-only-1"></script><script type="text/plain" data-game-src="game-app.js?v=native-only-1"></script>
+<script src="session-gate.js?v=session-4"></script>
+</body></html>

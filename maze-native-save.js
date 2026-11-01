@@ -1,0 +1,29 @@
+(function(e){
+ 'use strict';const node=typeof module==='object',E=node?require('./maze-events.js'):AmazonMazeEvents,D=node?require('./maze-sprite-data.js'):MAZE_SPRITE_DATA,P=node?require('./maze-presentation.js'):AmazonMazePresentation;
+ const phases=['tick','frames','sample','advance','postWalk','input','collisionReset','collisionDamage','hallRedraw','hallFinish','presentation','presentLead'];
+ const bytes=s=>Uint8Array.from(node?Buffer.from(s,'base64'):atob(s),v=>typeof v==='number'?v:v.charCodeAt(0));
+ const b64=b=>node?Buffer.from(b).toString('base64'):btoa(Array.from(b,v=>String.fromCharCode(v)).join(''));
+ const copy=x=>JSON.parse(JSON.stringify(x));
+ function decode64(s,max){if(typeof s!=='string'||s.length>max||s.length%4||!/^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(s))throw new Error('Invalid native maze graphics encoding');const b=bytes(s);if(b64(b)!==s)throw new Error('Noncanonical native maze encoding');return b;}
+ function delta(before,after){const out=[];for(let i=0;i<8192;){if(before[i]===after[i]){i++;continue;}const start=i;while(i<8192&&before[i]!==after[i])i++;const n=i-start;out.push(start&255,start>>8,n&255,n>>8);for(let j=start;j<i;j++)out.push(before[j]^after[j]);}return b64(Uint8Array.from(out));}
+ function applyDelta(before,encoded){const packed=decode64(encoded,44000),out=before.slice();let p=0,last=0;while(p<packed.length){if(p+4>packed.length)throw new Error('Truncated native maze delta');const start=packed[p]+256*packed[p+1],n=packed[p+2]+256*packed[p+3];p+=4;if(!n||start<last||start+n>8192||p+n>packed.length)throw new Error('Invalid native maze delta range');for(let i=0;i<n;i++)out[start+i]^=packed[p++];last=start+n;}return out;}
+ const integer=(n,max)=>Number.isSafeInteger(n)&&n>=0&&n<=max;
+ function validate(s){
+  if(!s||s.engine!=='native-maze'||![1,2].includes(s.version)||JSON.stringify(s).length>2000000||!phases.includes(s.phase)||!phases.includes(s.after)||s.after==='frames'||s.after==='presentation'||!integer(s.key,255)||!integer(s.cycles,Number.MAX_SAFE_INTEGER)||!integer(s.loopSerial,Number.MAX_SAFE_INTEGER)||!integer(s.remaining,100000000)||typeof s.clearOnExit!=='boolean'||typeof s.text!=='boolean'||typeof s.mixed!=='boolean'||!['','RUN KA','RUN AZ','ERROR 69'].includes(s.stopped)||!Array.isArray(s.queue)||s.queue.length>1024||!Number.isFinite(s.presentationCycles)||s.presentationCycles<0||s.presentationCycles>10000000)throw new Error('Invalid native maze snapshot');
+  const allowed=['engine','version','state','graphics','phase','key','cycles','loopSerial','queue','remaining','after','clearOnExit','hallReturn','presentationCycles','presentation','text','mixed','stopped'];if(Object.keys(s).some(k=>!allowed.includes(k)))throw new Error('Unknown native maze snapshot field');
+  E.validate(s.state);if(s.state.health>255||!Array.isArray(s.state.actors)||s.state.actors.length!==3)throw new Error('Invalid native maze actor state');
+  for(const a of s.state.actors)if(!['type','sequence','x','phase','y'].every(k=>integer(a[k],255))||(a.type>=4&&a.type<128)||a.phase>6||!integer(a.pointer,65535)||a.pointer<D.base||a.pointer>=0x8f00)throw new Error('Invalid native maze actor record');
+  for(let i=0;i<2;i++)if(s.state.flags[i]!==s.state.actors[i].type||s.state.positions[i]!==s.state.actors[i].x||s.state.velocities[i]!==s.state.actors[i].phase)throw new Error('Inconsistent native maze actor mirrors');
+  for(const k of ['scriptLow','scriptHigh','sceneCounter','labelRotation','labelScale','collisionX'])if(!integer(s.state[k],65535))throw new Error('Invalid native maze state word');
+  const frame=decode64(s.graphics,10924);if(frame.length!==8192)throw new Error('Invalid native maze page length');let page=frame;
+  for(const f of s.queue){if(!integer(f.cycles,100000000)||!f.cycles||typeof f.sound!=='boolean')throw new Error('Invalid native maze frame timing');page=applyDelta(page,f.delta);}
+  if(['frames','presentLead'].includes(s.phase)&&!s.remaining||!['frames','presentLead'].includes(s.phase)&&s.remaining||s.phase!=='frames'&&s.queue.length)throw new Error('Invalid native maze queued phase');
+  if(s.phase==='hallFinish'||s.phase==='hallRedraw'||s.after==='hallFinish'||s.after==='hallRedraw'){if(!['input','tick'].includes(s.hallReturn))throw new Error('Invalid native maze hall continuation');}
+  if(['presentation','presentLead'].includes(s.phase)&&!s.stopped){if(!s.presentation||!integer(s.presentation.index,1)||!integer(s.presentation.elapsed,16000))throw new Error('Invalid native maze presentation');const p=new P.Presentation(s.presentation.kind,s.state);p.index=s.presentation.index;p.load();if(s.presentation.elapsed>=p.wait.iterations&&p.wait.type!=='key'||p.wait.type==='key'&&s.presentation.elapsed)throw new Error('Invalid native maze wait progress');}
+  else if(s.presentation!==null)throw new Error('Unexpected native maze presentation');
+  return s;
+ }
+ function encode(m){let before=m.frame;const queue=m.queue.map(f=>{const d=delta(before,f.page);before=f.page;return {delta:d,cycles:f.cycles,sound:!!f.sound};});return validate({engine:'native-maze',version:2,state:copy(m.state),graphics:b64(m.frame),phase:m.phase,key:m.key,cycles:m.cycles,loopSerial:m.loopSerial,queue,remaining:m.remaining,after:m.after,clearOnExit:m.clearOnExit,hallReturn:m.hallReturn??null,presentationCycles:m.presentationCycles,presentation:m.presentation?{kind:m.presentation.kind,index:m.presentation.index,elapsed:m.presentation.elapsed}:null,text:m.text,mixed:m.mixed,stopped:m.stopped});}
+ function decode(s){validate(s);const out=copy(s);out.frame=bytes(s.graphics);let before=out.frame;out.queue=s.queue.map(f=>{const page=applyDelta(before,f.delta);before=page;return {page,cycles:f.cycles,sound:f.sound};});delete out.graphics;return out;}
+ Object.assign(e,{validate,encode,decode,delta,applyDelta});
+})(typeof module==='object'?module.exports:(globalThis.AmazonNativeMazeSave={}));

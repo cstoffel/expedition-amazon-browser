@@ -1,0 +1,1 @@
+(function(e){Object.assign(e,{"rom_sha256":"378ba00c86a64cca49cedaca7de8d5d351983ebc295d9d11e0752febfc346249","initialSeed":[128,18,52,86,120],"prefixLength":8192,"prefixFirst":0.8908115513622761,"prefixLast":0.7474724380299449,"prefixSeed":[128,63,90,90,140]});})(typeof module==='object'?module.exports:(globalThis.RANDOM_DATA={}));

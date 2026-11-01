@@ -1,0 +1,1 @@
+(function(e){Object.assign(e,{"messages":{"starvation":["I'M SORRY TO INFORM YOU THAT OUR","INTREPID EXPLORER HAS STARVED."],"fatalTrap":["SORRY---"],"return":["WE NOW REJOIN THE REMAINDER","OF THE EXPEDITION","(IF THERE IS ANY)"]}});})(typeof module==='object'?module.exports:(globalThis.MAZE_EVENT_DATA={}));
